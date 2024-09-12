@@ -6,7 +6,6 @@ from pandas import read_csv
 # configurações da página
 
 st.set_page_config(layout="wide",page_title="Focos de incêndio",page_icon=":fire:")
-st.sidebar.header("Estados")
 
 # §§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§ #
 # funções
@@ -45,6 +44,11 @@ with col02:
     st.image('image/queimadas.jpg',width=600)
 with col03:
     pass
+# §§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§ #
+# Barra lateral
+table = st.sidebar.checkbox("Tabela", False)
+
+mapa = st.sidebar.checkbox("Gráfico Mapa",False)
 
 # §§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§ #
 # Carrega arquivo
@@ -89,8 +93,11 @@ df = lerArquivo()
 
 # §§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§ #
 
-table = st.sidebar.checkbox("Tabela", False)
+
 if df is not None:
     df_amostra = df.sample(n=60)
     if table:
         st.dataframe(df_amostra)
+
+if mapa:
+    st.map(df, latitude='latitude', longitude='longitude')

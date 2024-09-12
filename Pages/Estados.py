@@ -7,7 +7,6 @@ import plotly.figure_factory as ff
 # configurações da página
 
 st.set_page_config(layout="wide",page_title="Focos de incêndio",page_icon=":fire:")
-st.sidebar.header("Estados")
 
 # §§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§ #
 # funções
