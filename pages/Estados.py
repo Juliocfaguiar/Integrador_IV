@@ -67,7 +67,7 @@ with col03:
 # §§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§ #
 # Barra lateral
 table = st.sidebar.checkbox("Tabela", False)
-histograma = st.sidebar.checkbox("Histograma",False) 
+# histograma = st.sidebar.checkbox("Histograma",False) 
 mapa = st.sidebar.checkbox("Gráfico Mapa",False)
 
 # §§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§ #
@@ -80,17 +80,17 @@ if mapa:
     st.map(df, latitude='lat', longitude='lon')
 # pip install streamlit-folium
 
-if histograma:
-    col04,col05 = st.columns(2)
-    with col04:
-        selecao = st.multiselect('Selecione',colunas(),
-        ['municipio'])
-        legendas= [f'selecao']
+# if histograma:
+#     col04,col05 = st.columns(2)
+#     with col04:
+#         selecao = st.multiselect('Selecione',colunas(),
+#         ['municipio'])
+#         legendas= [f'selecao']
 
-    with col05:
-        fig = ff.create_distplot(
-        selecao, legendas,bin_size=[.1, .25, .5])
-        st.plotly_chart(fig, use_container_width=True)
+#     with col05:
+#         fig = ff.create_distplot(
+#         selecao, legendas,bin_size=[.1, .25, .5])
+#         st.plotly_chart(fig, use_container_width=True)
 
 # §§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§ #
 
