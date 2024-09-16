@@ -1,5 +1,7 @@
 import streamlit as st
 from pandas import read_csv
+import matplotlib.pyplot as plt
+import plotly.express as px
 # import plotly.figure_factory as ff
 
 
@@ -12,7 +14,9 @@ st.set_page_config(layout="wide",page_title="Focos de incêndio",page_icon=":fir
 # funções
 
 
-
+def barras_graf():
+    columns = ['id_bioma','id_municipio']
+    return columns
 def colunas():
     columns =  ['data','hora','municipio','bioma','estado','id_bdq','foco_id','lat','lon']
     return columns
@@ -47,6 +51,20 @@ def lerArquivo():
 
                 # Reordena o DataFrame usando a nova ordem de colunas
                 df = df[cols]
+                
+
+                # atribui número a cada bioma único começando com 1
+                bioma_mapeado = {bioma: i + 1 for i, bioma in enumerate(df['bioma'].unique())}
+
+                # cria uma nova coluna id_bioma
+                df['id_bioma'] = df['bioma'].map(bioma_mapeado)
+
+                # atribui número a cada municípios único começando com 1
+                municipio_mapeado = {municipio: i + 1 for i, municipio in enumerate(df['municipio'].unique())}
+
+                # Create a new column with the município IDs
+                df['id_municipio'] = df['municipio'].map(municipio_mapeado)
+
                 return df
     else:
         st.error('Arquivo ainda não foi importado')
@@ -67,9 +85,8 @@ with col03:
 # §§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§ #
 # Barra lateral
 table = st.sidebar.checkbox("Tabela", False)
-# histograma = st.sidebar.checkbox("Histograma",False) 
 mapa = st.sidebar.checkbox("Gráfico Mapa",False)
-
+barras = st.sidebar.checkbox("Grafico Barras",False) 
 # §§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§ #
 
 if table:
@@ -80,24 +97,56 @@ if mapa:
     st.map(df, latitude='lat', longitude='lon')
 # pip install streamlit-folium
 
-# if histograma:
-#     col04,col05 = st.columns(2)
-#     with col04:
-#         selecao = st.multiselect('Selecione',colunas(),
-#         ['municipio'])
-#         legendas= [f'selecao']
+if barras:
+    options = st.radio("selecione a variável", ["id_bioma", "id_municipio"],
+                        horizontal=True)
 
-#     with col05:
-#         fig = ff.create_distplot(
-#         selecao, legendas,bin_size=[.1, .25, .5])
-#         st.plotly_chart(fig, use_container_width=True)
+    if options == "id_bioma":
+                col04,col05,col06,col07 = st.columns(4)
+                with col04:
+                    # Cria o gráfico com Plotly
+                    fig = px.bar(df, x="data", y="id_bioma", color="bioma", 
+                    title="Quantidade de queimadas por ano",width=1000, height=720,
+                    labels={"data": "Data", "id_bioma": "Tipo de Bioma"},
+                    barmode ='group',
 
-# §§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§ #
+                    color_discrete_map={"Pantanal": "green", "Mata Atlântica": "blue","Cerrado":"red"}) # Define cores personalizadas
 
+                    # Exibe o gráfico no Streamlit
+                    st.plotly_chart(fig)
+                with col05:
+                    pass
+                with col06:
+                    pass
+                with col07:
 
+                    # Conta a quantidade de ocorrências de cada bioma
+                    bioma_counts = df['bioma'].value_counts()
+                    st.write("**Quantidade de Focos por Bioma:**")
+                    st.write(bioma_counts)
 
-# §§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§ #
+        
 
+    if options == "id_municipio":
+                        col08,col09,col10,col11 = st.columns(4)
+                        with col08:
+                        # Cria o gráfico com Plotly
+                            fig = px.bar(df, x="data", y="id_municipio", color="municipio", 
+                            title="Quantidade de queimadas por ano",width=1000, height=720,
+                            barmode ='group',
+                            labels={"data": "Data", "id_municipio": ""})
+                            # color_discrete_map={"Pantanal": "green", "Mata Atlântica": "blue","Cerrado":"red"}) # Define cores personalizadas
 
+                            # Exibe o gráfico no Streamlit
+                            st.plotly_chart(fig)
+                        with col09:
+                            pass
+                        with col10:
+                            pass
+                        with col11:
 
+                            # Conta a quantidade de ocorrências de cada bioma
+                            municipio_counts = df['municipio'].value_counts()
+                            st.write("**Quantidade de Focos por Municipio:**")
+                            st.write(municipio_counts)
 # §§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§ #
