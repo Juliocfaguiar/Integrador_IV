@@ -103,14 +103,15 @@ if barras:
     if options == "id_bioma":
                 col04,col05,col06,col07 = st.columns(4)
                 with col04:
+                    # Agrupa por data e bioma, contando as ocorrências
+                    df_agrupado = df.groupby(['data', 'bioma']).count().reset_index()
                     # Cria o gráfico com Plotly
-                    fig = px.bar(df, x="data", y="id_bioma", color="bioma", 
-                    title="Quantidade de queimadas por ano",width=1000, height=720,
-                    labels={"data": "Data", "id_bioma": "Tipo de Bioma"},
+                    fig = px.bar(df_agrupado, x="data", y="id_bioma", color="bioma", 
+                    width=1000, height=720,
+                    labels={"data": "Data", "id_bioma": " "},
                     barmode ='group',
 
                     color_discrete_map={"Pantanal": "green", "Mata Atlântica": "blue","Cerrado":"red"}) # Define cores personalizadas
-
                     # Exibe o gráfico no Streamlit
                     st.plotly_chart(fig)
                 with col05:
@@ -126,26 +127,29 @@ if barras:
 
         
 
+
     if options == "id_municipio":
-                        col08,col09,col10,col11 = st.columns(4)
-                        with col08:
-                        # Cria o gráfico com Plotly
-                            fig = px.bar(df, x="data", y="id_municipio", color="municipio", 
-                            title="Quantidade de queimadas por ano",width=1000, height=720,
+                col08,col09,col10,col11 = st.columns(4)
+                with col08:
+                            
+                            # Agrupa por data e municipio, contando as ocorrências
+                            df_agrupado = df.groupby(['data','municipio']).count().reset_index()
+                            # Cria o gráfico com Plotly
+                            fig = px.bar(df_agrupado, x="data", y="id_municipio", color="municipio", 
+                            width=1000, height=720,
                             barmode ='group',
                             labels={"data": "Data", "id_municipio": ""})
-                            # color_discrete_map={"Pantanal": "green", "Mata Atlântica": "blue","Cerrado":"red"}) # Define cores personalizadas
 
                             # Exibe o gráfico no Streamlit
                             st.plotly_chart(fig)
-                        with col09:
-                            pass
-                        with col10:
-                            pass
-                        with col11:
+                with col09:
+                    pass
+                with col10:
+                    pass
+                with col11:
 
-                            # Conta a quantidade de ocorrências de cada bioma
-                            municipio_counts = df['municipio'].value_counts()
-                            st.write("**Quantidade de Focos por Municipio:**")
-                            st.write(municipio_counts)
-# §§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§ #
+                    # Conta a quantidade de ocorrências de cada bioma
+                    municipio_counts = df['municipio'].value_counts()
+                    st.write("**Quantidade de Focos por Municipio:**")
+                    st.write(municipio_counts)
+# # # §§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§ #
