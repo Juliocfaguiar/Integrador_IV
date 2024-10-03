@@ -1,9 +1,9 @@
 import streamlit as st
 import pandas as pd
 from pandas import read_csv
-import geopandas as gpd
-from shapely.geometry import Point
-import matplotlib.pyplot as plt
+# import geopandas as gpd
+# from shapely.geometry import Point
+# import matplotlib.pyplot as plt
 import plotly.express as px
 # import plotly.figure_factory as ff
 
@@ -118,9 +118,9 @@ with col02:
             df_municipio = df_selecionado[df_selecionado['municipio'] == opcao_municipio]
             # st.write(df_municipio)
             # Cria uma coluna de geometria no DataFrame filtrado
-            geometry = [Point(xy) for xy in zip(df_municipio['lon'], df_municipio['lat'])]
-            crs={'proj': 'latlong', 'ellps':'WGS84', 'datum': 'WGS84','no_defs':True}
-            gdf = gpd.GeoDataFrame(df_municipio, geometry=geometry,crs=crs)
+            # geometry = [Point(xy) for xy in zip(df_municipio['lon'], df_municipio['lat'])]
+            # crs={'proj': 'latlong', 'ellps':'WGS84', 'datum': 'WGS84','no_defs':True}
+            # gdf = gpd.GeoDataFrame(df_municipio, geometry=geometry,crs=crs)
 
         # Define o sistema de coordenadas geográficas
         # gdf.set_crs(epsg=4326, inplace=True)
