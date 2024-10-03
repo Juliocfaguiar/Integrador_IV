@@ -9,6 +9,16 @@ st.set_page_config(layout="wide",page_title="Focos de incêndio",page_icon=":fir
 
 # §§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§ #
 # funções
+def variaveis_estados():
+    Estados = ['ACRE', 'ALAGOAS', 'AMAPÁ', 'AMAZONAS', 'BAHIA', 'CEARÁ',
+       'DISTRITO FEDERAL', 'ESPÍRITO SANTO', 'GOIÁS', 'MARANHÃO',
+       'MATO GROSSO', 'MATO GROSSO DO SUL', 'MINAS GERAIS', 'PARÁ',
+       'PARAÍBA', 'PARANÁ', 'PERNAMBUCO', 'PIAUÍ', 'RIO DE JANEIRO',
+       'RIO GRANDE DO NORTE', 'RIO GRANDE DO SUL', 'RONDÔNIA', 'RORAIMA',
+       'SANTA CATARINA', 'SÃO PAULO', 'SERGIPE', 'TOCANTINS']
+    return Estados
+
+
 
 def variaveis_municipios():
     municipios = ['RIO VERDE DE MATO GROSSO', 'CASSILÂNDIA', 'AQUIDAUANA',
