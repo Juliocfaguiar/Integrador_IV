@@ -3,7 +3,7 @@ import pandas as pd
 from pandas import read_csv
 # import geopandas as gpd
 # from shapely.geometry import Point
-# import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt
 import plotly.express as px
 # import plotly.figure_factory as ff
 
@@ -18,7 +18,7 @@ st.set_page_config(layout="wide",page_title="Focos de incêndio",page_icon=":fir
 
 
 def barras_graf():
-    columns = ['id_bioma','id_municipio']
+    columns = ['BIOMA','MUNICIPIO']
     return columns
 def colunas():
     columns =  ['data','hora','municipio','bioma','estado','id_bdq','foco_id','lat','lon']
@@ -76,8 +76,8 @@ def lerArquivo():
                         for i, municipio in enumerate(novos_municipios):
                             municipio_mapeado[municipio] = len(municipio_mapeado) + i + 1
 
-                    df['id_bioma'] = df['bioma'].map(bioma_mapeado)
-                    df['id_municipio'] = df['municipio'].map(municipio_mapeado)
+                    df['BIOMA'] = df['bioma'].map(bioma_mapeado)
+                    df['MUNICIPIO'] = df['municipio'].map(municipio_mapeado)
 
                     dfs[arquivo.name] = df  # Armazena o DataFrame com o nome do arquivo como chave
 
@@ -146,15 +146,15 @@ if mapa:
 # pip install streamlit-folium
 
 if barras:
-    options = st.radio("selecione a variável", ["id_bioma", "id_municipio"],
+    options = st.radio("selecione a variável", ["BIOMA", "MUNICIPIO"],
                         horizontal=True)
 
-    if options == "id_bioma":
+    if options == "BIOMA":
                 col04,col05,col06,col07 = st.columns(4,gap = "large")
                 with col04:
-                    fig = px.bar(df_selecionado, x="data", y="id_bioma", color="bioma", 
+                    fig = px.bar(df_selecionado, x="data", y="BIOMA", color="bioma", 
                     width=900, height=720,
-                    labels={"data": "Data", "id_bioma": "Tipo de Bioma"},
+                    labels={"data": "Data", "BIOMA": "Tipo de Bioma"},
                     barmode ='group',
 
                     color_discrete_map={"Pantanal": "green", "Mata Atlântica": "blue","Cerrado":"red"}) # Define cores personalizadas
@@ -163,26 +163,36 @@ if barras:
                     st.plotly_chart(fig)
 
                 with col05:
-                     pass
+                    pass
                 with col06:
                      pass
                 with col07:
-
                     # Conta a quantidade de ocorrências de cada bioma
                     bioma_counts = df_selecionado['bioma'].value_counts()
                     st.write("**Quantidade de Focos por Bioma:**")
                     st.write(bioma_counts)
 
-        
+                    focos_por_bioma_ano = df_selecionado.groupby(['bioma', 'data'])['data'].count().reset_index(name='contagem_focos')
+                    media_focos_por_bioma = focos_por_bioma_ano.groupby('bioma')['contagem_focos'].mean().reset_index(name='media_focos')
+                    top_biomas = media_focos_por_bioma.sort_values('media_focos', ascending=False).head(10)
 
-    if options == "id_municipio":
+                    # Cria o gráfico de pizza
+                    fig, ax = plt.subplots(figsize=(3, 3))
+                    ax.pie(top_biomas['media_focos'], labels=top_biomas['bioma'], autopct='%1.1f%%', startangle=90)
+                    ax.axis('equal') 
+                    # ax.set_title('Média de Focos por Ano nos 10 Municípios com Maior Média')
+                    st.pyplot(fig)
+
+
+    if options == "MUNICIPIO":
                         col08,col09,col10,col11 = st.columns(4,gap = "large")
                         with col08:
+
                         # Cria o gráfico com Plotly
-                            fig = px.bar(df_selecionado, x="data", y="id_municipio", color="municipio", 
+                            fig = px.bar(df_selecionado, x="data", y="MUNICIPIO", color="municipio", 
                             width=900, height=720,
                             barmode ='group',
-                            labels={"data": "Data", "id_municipio": ""})
+                            labels={"data": "Data", "MUNICIPIO": ""})
                             # color_discrete_map={"Pantanal": "green", "Mata Atlântica": "blue","Cerrado":"red"}) # Define cores personalizadas
 
                             # Exibe o gráfico no Streamlit
@@ -192,8 +202,20 @@ if barras:
                         with col10:
                              pass
                         with col11:
-                            # Conta a quantidade de ocorrências de cada bioma
+                             # Conta a quantidade de ocorrências de cada bioma
                             municipio_counts = df_selecionado['municipio'].value_counts()
                             st.write("**Quantidade de Focos por Municipio:**")
                             st.write(municipio_counts)
+
+                            focos_por_municipio_ano = df_selecionado.groupby(['municipio', 'data'])['data'].count().reset_index(name='contagem_focos')
+                            media_focos_por_municipio = focos_por_municipio_ano.groupby('municipio')['contagem_focos'].mean().reset_index(name='media_focos')
+                            top_10_municipios = media_focos_por_municipio.sort_values('media_focos', ascending=False).head(10)
+
+                           # Cria o gráfico de pizza
+                            fig, ax = plt.subplots(figsize=(5.5, 5.5))
+                            ax.pie(top_10_municipios['media_focos'], labels=top_10_municipios['municipio'], autopct='%1.1f%%', startangle=90)
+                            ax.axis('equal') 
+                            ax.set_title('Média de Focos por Ano nos 10 Municípios com Maior Média')
+                            st.pyplot(fig)
+                            
 # §§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§ #

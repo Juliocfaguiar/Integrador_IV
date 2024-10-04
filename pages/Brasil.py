@@ -65,7 +65,7 @@ mapa = st.sidebar.checkbox("Gráfico Mapa",False)
 
 
 def lerArquivo():
-    arquivo = st.file_uploader("Escolha um arquivo CSV",type=['csv'])
+    arquivo = st.file_uploader("Escolha um arquivo CSV",type=['csv'], accept_multiple_files=True, key="upload_csv")
     if arquivo:
         print(arquivo.type)
         match arquivo.type.split('/'):
