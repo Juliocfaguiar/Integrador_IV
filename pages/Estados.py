@@ -3,7 +3,7 @@ import pandas as pd
 from pandas import read_csv
 # import geopandas as gpd
 # from shapely.geometry import Point
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 import plotly.express as px
 # import plotly.figure_factory as ff
 
@@ -166,11 +166,11 @@ if barras:
                     top_biomas = media_focos_por_bioma.sort_values('media_focos', ascending=False).head(10)
 
                     # Cria o gráfico de pizza
-                    fig, ax = plt.subplots(figsize=(3, 3))
-                    ax.pie(top_biomas['media_focos'], labels=top_biomas['bioma'], autopct='%1.1f%%', startangle=90)
-                    ax.axis('equal') 
-                    # ax.set_title('Média de Focos por Ano nos 10 Municípios com Maior Média')
-                    st.pyplot(fig)
+                    # fig, ax = plt.subplots(figsize=(3, 3))
+                    # ax.pie(top_biomas['media_focos'], labels=top_biomas['bioma'], autopct='%1.1f%%', startangle=90)
+                    # ax.axis('equal') 
+                    # # ax.set_title('Média de Focos por Ano nos 10 Municípios com Maior Média')
+                    # st.pyplot(fig)
 
 
     if options == "MUNICIPIO":
@@ -200,10 +200,10 @@ if barras:
                             top_10_municipios = media_focos_por_municipio.sort_values('media_focos', ascending=False).head(10)
 
                            # Cria o gráfico de pizza
-                            fig, ax = plt.subplots(figsize=(5.5, 5.5))
-                            ax.pie(top_10_municipios['media_focos'], labels=top_10_municipios['municipio'], autopct='%1.1f%%', startangle=90)
-                            ax.axis('equal') 
-                            ax.set_title('Média de Focos por Ano nos 10 Municípios com Maior Média')
-                            st.pyplot(fig)
+                            # fig, ax = plt.subplots(figsize=(5.5, 5.5))
+                            # ax.pie(top_10_municipios['media_focos'], labels=top_10_municipios['municipio'], autopct='%1.1f%%', startangle=90)
+                            # ax.axis('equal') 
+                            # ax.set_title('Média de Focos por Ano nos 10 Municípios com Maior Média')
+                            # st.pyplot(fig)
                             
 # §§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§ #
