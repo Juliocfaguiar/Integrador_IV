@@ -116,14 +116,7 @@ with col02:
             df_selecionado = dfs[opcao_df]
             # Filtra o DataFrame pelo município selecionado
             df_municipio = df_selecionado[df_selecionado['municipio'] == opcao_municipio]
-            # st.write(df_municipio)
-            # Cria uma coluna de geometria no DataFrame filtrado
-            # geometry = [Point(xy) for xy in zip(df_municipio['lon'], df_municipio['lat'])]
-            # crs={'proj': 'latlong', 'ellps':'WGS84', 'datum': 'WGS84','no_defs':True}
-            # gdf = gpd.GeoDataFrame(df_municipio, geometry=geometry,crs=crs)
-
-        # Define o sistema de coordenadas geográficas
-        # gdf.set_crs(epsg=4326, inplace=True)
+ 
 
 
 with col03:
@@ -137,11 +130,7 @@ if table:
         st.dataframe(df_selecionado,width=2000,height=550)
 
 if mapa:
-     # Plota o gráfico com geopandas
-    # fig, ax = plt.subplots(figsize=(20, 8))
-    # gdf.plot(ax=ax, markersize=50, color='red', alpha=0.5,edgecolor='black')
-    # ax.set_title(f"Localização das Ocorrências em {opcao_municipio}")
-    # st.pyplot(fig)
+
     st.map(df_municipio, latitude='lat', longitude='lon')
 # pip install streamlit-folium
 
@@ -193,7 +182,6 @@ if barras:
                             width=900, height=720,
                             barmode ='group',
                             labels={"data": "Data", "MUNICIPIO": ""})
-                            # color_discrete_map={"Pantanal": "green", "Mata Atlântica": "blue","Cerrado":"red"}) # Define cores personalizadas
 
                             # Exibe o gráfico no Streamlit
                             st.plotly_chart(fig)

@@ -1,4 +1,6 @@
+
 import streamlit as st
+import pandas as pd
 from pandas import read_csv
 
 
@@ -9,16 +11,6 @@ st.set_page_config(layout="wide",page_title="Focos de incêndio",page_icon=":fir
 
 # §§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§ #
 # funções
-def variaveis_estados():
-    Estados = ['ACRE', 'ALAGOAS', 'AMAPÁ', 'AMAZONAS', 'BAHIA', 'CEARÁ',
-       'DISTRITO FEDERAL', 'ESPÍRITO SANTO', 'GOIÁS', 'MARANHÃO',
-       'MATO GROSSO', 'MATO GROSSO DO SUL', 'MINAS GERAIS', 'PARÁ',
-       'PARAÍBA', 'PARANÁ', 'PERNAMBUCO', 'PIAUÍ', 'RIO DE JANEIRO',
-       'RIO GRANDE DO NORTE', 'RIO GRANDE DO SUL', 'RONDÔNIA', 'RORAIMA',
-       'SANTA CATARINA', 'SÃO PAULO', 'SERGIPE', 'TOCANTINS']
-    return Estados
-
-
 
 def variaveis_municipios():
     municipios = ['RIO VERDE DE MATO GROSSO', 'CASSILÂNDIA', 'AQUIDAUANA',
@@ -57,7 +49,6 @@ with col03:
 # §§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§ #
 # Barra lateral
 table = st.sidebar.checkbox("Tabela", False)
-
 mapa = st.sidebar.checkbox("Gráfico Mapa",False)
 
 # §§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§ #
@@ -65,49 +56,67 @@ mapa = st.sidebar.checkbox("Gráfico Mapa",False)
 
 
 def lerArquivo():
-    arquivo = st.file_uploader("Escolha um arquivo CSV",type=['csv'], accept_multiple_files=True, key="upload_csv")
+    arquivo = st.file_uploader("Escolha um ou mais arquivos CSV", type=['csv'], accept_multiple_files=True, key="upload_csv")
+    dfs = {}  # Utiliza um dicionário para armazenar os DataFrames com nomes de arquivo como chaves
     if arquivo:
-        print(arquivo.type)
-        match arquivo.type.split('/'):
-            case 'text','csv':
-                df = read_csv(arquivo,sep =",")
-                
-                # Divide a coluna 'datahora' em duas colunas: 'data' e 'hora'
-                df[['data', 'hora']] = df['datahora'].str.split(' ', expand=True)
+        for i, arquivo in enumerate(arquivo):
+            print(arquivo.type)
+            match arquivo.type.split('/'):
+                case 'text', 'csv':
+                    df = pd.read_csv(arquivo, sep=",")
+                    
+                    # Separa a coluna 'data_pas' em duas colunas: 'data' e 'hora'
+                    df[['data', 'hora']] = df['datahora'].str.split(' ', expand=True)
+                    
+                    # Obtém a lista de colunas do DataFrame
+                    cols = list(df.columns)
 
-                # Obtém a lista de todas as colunas do DataFrame
-                cols = list(df.columns)
+                    # Obtém o índice das colunas 'data' e 'hora' na lista de colunas
+                    data_index = cols.index('data')
+                    hora_index = cols.index('hora')
 
-                # Obtém o índice (posição) das colunas 'data' e 'hora' na lista de colunas
-                data_index = cols.index('data')
-                hora_index = cols.index('hora')
+                    # Remove as colunas 'data' e 'hora' de suas posições atuais na lista
+                    cols.pop(data_index)
+                    cols.pop(hora_index - 1)  # Ajusta o índice da coluna 'hora' após a remoção de 'data'
 
-                # Remove as colunas 'data' e 'hora' de suas posições originais na lista
-                cols.pop(data_index)
-                cols.pop(hora_index - 1)  # Ajusta o índice de 'hora' devido à remoção de 'data'
+                    # Insere as colunas 'data' e 'hora' no início da lista
+                    cols.insert(0, 'hora')
+                    cols.insert(0, 'data')
 
-                # Insere as colunas 'data' e 'hora' no início da lista de colunas
-                cols.insert(0, 'hora')
-                cols.insert(0, 'data')
+                    # Reordena o DataFrame usando a nova ordem de colunas
+                    df = df[cols]
 
-                # Reordena o DataFrame usando a nova ordem de colunas
-                df = df[cols]
+                    # Remove a coluna original 'datahora' do DataFrame
+                    df = df.drop('datahora', axis=1)
+                    dfs[arquivo.name] = df  # Armazena o DataFrame com o nome do arquivo como chave
+        return dfs
 
-                # Remove a coluna original 'datahora' do DataFrame
-                df = df.drop('datahora', axis=1)
-                return df
-    else:
-        st.error('Arquivo ainda não foi importado')
         
-df = lerArquivo()
+dfs = lerArquivo()
 
 # §§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§ #
 
+if dfs:
+    # Cria um selectbox para escolher o DataFrame
+    opcao_df = st.selectbox("Selecione o DataFrame:", list(dfs.keys()))
 
-if df is not None:
-    df_amostra = df.sample(n=60)
+    df_selecionado = dfs[opcao_df]
+
+    municipios = df_selecionado['municipio'].unique()
+
+if dfs is not None:
+    
     if table:
+        df_amostra = df_selecionado.sample(n=60)
         st.dataframe(df_amostra)
 
-if mapa:
-    st.map(df, latitude='latitude', longitude='longitude')
+# if mapa:
+
+# # Cria o selectbox para filtrar por município
+#     opcao_municipio = st.selectbox("Selecione o Município:", municipios)
+#     # Acessa o DataFrame selecionado
+#     df_selecionado = dfs[opcao_df]
+#     # Filtra o DataFrame pelo município selecionado
+#     df_municipio = df_selecionado[df_selecionado['municipio'] == opcao_municipio]
+
+#     st.map(df_selecionado, latitude='latitude', longitude='longitude')
